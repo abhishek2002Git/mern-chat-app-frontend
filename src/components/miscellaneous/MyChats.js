@@ -1,4 +1,4 @@
-import { AddIcon } from "@chakra-ui/icons";
+// import { AddIcon } from "@chakra-ui/icons";
 import { Box, Stack, Text } from "@chakra-ui/layout";
 import { useToast } from "@chakra-ui/toast";
 import axios from "axios";
@@ -6,13 +6,13 @@ import { useEffect, useState } from "react";
 import { getSender } from "../../config/ChatLogics";
 import ChatLoading from "../ChatLoading ";
 import GroupChatModal from "./GroupChatModal";
-import { Button } from "@chakra-ui/react";
+// import { Button } from "@chakra-ui/react";
 import { ChatState } from "../../Context/ChatProvider";
 
 const MyChats = ({fetchAgain}) => {
   const [loggedUser, setLoggedUser] = useState();
 
-  const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
+  const { selectedChat, setSelectedChat, user, chats, setChats, dark, fetchTheChats } = ChatState();
 
   const toast = useToast();
 
@@ -25,7 +25,7 @@ const MyChats = ({fetchAgain}) => {
         },
       };
 
-      const { data } = await axios.get("/api/chat", config);
+      const { data } = await axios.get("https://inotebookbackend.herokuapp.com/api/chat", config);
       setChats(data);
     } catch (error) {
       toast({
@@ -45,6 +45,7 @@ const MyChats = ({fetchAgain}) => {
     // eslint-disable-next-line
     // console.log(chats)
   }, [fetchAgain]);
+  
 
   return (
     <Box
@@ -52,7 +53,8 @@ const MyChats = ({fetchAgain}) => {
     flexDir="column"
     alignItems="center"
     p={3}
-    bg="white"
+    bg={dark===false?"white":"black"}
+    color={dark===false?"black":"white"}
     w={{ base: "100%", md: "31%" }}
     borderRadius="lg"
     borderWidth="1px"
@@ -69,21 +71,13 @@ const MyChats = ({fetchAgain}) => {
         alignItems="center"
       >
         My Chats
-        <GroupChatModal>
-          {/* <Button
-            d="flex"
-            fontSize={{ base: "17px", md: "10px", lg: "17px" }}
-            rightIcon={<AddIcon />}
-          >
-            New Group Chat
-          </Button> */}
-        </GroupChatModal>
+        <GroupChatModal></GroupChatModal>
       </Box>
       <Box
         d="flex"
         flexDir="column"
         p={3}
-        bg="#F8F8F8"
+        bg={dark===false?"white":"black"}
         w="100%"
         h="100%"
         borderRadius="lg"
@@ -95,8 +89,8 @@ const MyChats = ({fetchAgain}) => {
               <Box
                 onClick={() => setSelectedChat(chat)}
                 cursor="pointer"
-                bg={selectedChat === chat ? "#38B2AC" : "#E8E8E8"}
-                color={selectedChat === chat ? "white" : "black"}
+                bg={selectedChat === chat ? "#38B2AC" : dark===false?"#E8E8E8":"#202020"}
+                color={selectedChat === chat ? "white" : dark===false?"black":"white"}
                 px={3}
                 py={2}
                 borderRadius="lg"

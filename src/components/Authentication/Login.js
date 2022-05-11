@@ -7,14 +7,19 @@ import { useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
+import { ChatState } from "../../Context/ChatProvider";
 
 const Login = () => {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState();
+  const [phnumber, setPhnumber] = useState();
   const [password, setPassword] = useState();
   const [loading, setLoading] = useState(false);
   const toast = useToast();
   const history = useHistory();
+
+  const { host } = ChatState();
+  // console.log(`${host}/api/user/login`)
 
   const handleClick = () => {
     setShow(!show);
@@ -40,13 +45,14 @@ const Login = () => {
         },
       };
       const { data } = await axios.post(
-        "/api/user/login",
+        `${host}/api/user/login`,
         {
           email,
           password
         },
         config
       );
+      // console.log(data)
 
       toast({
         title: "Login Successful",
@@ -58,6 +64,9 @@ const Login = () => {
       localStorage.setItem("userInfo", JSON.stringify(data));
       setLoading(false);
       history.push("/chats");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       toast({
         title: "Error Occured!",
@@ -114,7 +123,6 @@ const Login = () => {
         variant={"solid"}
         colorScheme={"red"}
         width={"100%"}
-        // style={{ marginTop: 15 }}
         onClick={() => {
           setEmail("guest@example.com");
           setPassword("12345678");

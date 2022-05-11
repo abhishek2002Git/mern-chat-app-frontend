@@ -31,7 +31,7 @@ const GroupChatModal = ({children}) => {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
-  const { user, chats, setChats } = ChatState();
+  const { user, chats, setChats, dark } = ChatState();
 
   const handleSubmit = async () => {
     if (!groupChatName || !selectedUsers) {
@@ -52,7 +52,7 @@ const GroupChatModal = ({children}) => {
         },
       };
       const { data } = await axios.post(
-        `/api/chat/group`,
+        `https://inotebookbackend.herokuapp.com/api/chat/group`,
         {
           name: groupChatName,
           users: JSON.stringify(selectedUsers.map((u) => u._id)),
@@ -94,7 +94,7 @@ const GroupChatModal = ({children}) => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.get(`/api/user?search=${search}`, config);
+      const { data } = await axios.get(`https://inotebookbackend.herokuapp.com/api/user?search=${search}`, config);
       // console.log(data);
       setLoading(false);
       setSearchResult(data);
@@ -133,7 +133,7 @@ const GroupChatModal = ({children}) => {
     <>
       {/* <span onClick={onOpen}>{children}</span> */}
       <Button
-            d="flex"
+            d="flex" bg={dark===false?"white":"black"}
             fontSize={{ base: "17px", md: "10px", lg: "17px" }}
             rightIcon={<AddIcon />}
             onClick={onOpen}
@@ -143,7 +143,7 @@ const GroupChatModal = ({children}) => {
 
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent bg={dark===false?"white":"black"} color={dark===false?"black":"white"} style={{border:'2px solid white'}}>
           <ModalHeader
             fontSize="35px"
             fontFamily="Work sans"

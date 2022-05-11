@@ -1,6 +1,7 @@
-import React from 'react'
-import { useDisclosure } from "@chakra-ui/hooks"
+import React from "react";
+import { useDisclosure } from "@chakra-ui/hooks";
 import { ViewIcon } from "@chakra-ui/icons";
+import { ChatState } from "../../Context/ChatProvider";
 import {
   Modal,
   ModalOverlay,
@@ -14,20 +15,32 @@ import {
   Text,
   Image,
 } from "@chakra-ui/react";
+import DeleteChatModal from "./DeleteChatModal";
+import ClearChatModal from "./ClearChatModel";
 
-
-const ProfileModal = ({ user, children }) => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+const ProfileModal = ({ user, children, setMessages}) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { dark, users } = ChatState();
   return (
     <>
       {children ? (
         <span onClick={onOpen}>{children}</span>
       ) : (
-        <IconButton d={{ base: "flex" }} icon={<ViewIcon />} onClick={onOpen} />
+        <IconButton
+          bg={dark === false ? "#e8e8e8" : "#202020"}
+          d={{ base: "flex" }}
+          icon={<ViewIcon />}
+          onClick={onOpen}
+        />
       )}
       <Modal size="lg" onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
-        <ModalContent h="410px">
+        <ModalContent
+          h="410px"
+          bg={dark === false ? "white" : "#101010"}
+          color={dark === false ? "black" : "white"}
+          style={{ border: dark === false ? "" : "2px solid white" }}
+        >
           <ModalHeader
             fontSize="40px"
             fontFamily="Work sans"
@@ -57,12 +70,16 @@ const ProfileModal = ({ user, children }) => {
             </Text>
           </ModalBody>
           <ModalFooter>
-            <Button onClick={onClose}>Close</Button>
+              <ClearChatModal setMessages={setMessages} UserWhomDateIsToBeShownInModal={user}/>
+              <DeleteChatModal UserWhomDateIsToBeShownInModal={user}/>
+            <Button bg={dark === false ? "" : "black"} onClick={onClose}>
+              Close
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
     </>
-  )
-}
+  );
+};
 
-export default ProfileModal
+export default ProfileModal;

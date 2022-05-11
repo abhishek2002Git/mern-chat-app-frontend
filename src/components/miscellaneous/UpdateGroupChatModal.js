@@ -31,7 +31,7 @@ const UpdateGroupChatModal = ({fetchMessages , fetchAgain , setFetchAgain}) => {
   const [renameloading, setRenameLoading] = useState(false);
   const toast = useToast();
 
-  const { selectedChat, setSelectedChat, user } = ChatState();
+  const { selectedChat, setSelectedChat, user, dark } = ChatState();
 
   const handleAddUser = async (user1) => {
     if (selectedChat.users.find((u) => u._id === user1._id)) {
@@ -64,7 +64,7 @@ const UpdateGroupChatModal = ({fetchMessages , fetchAgain , setFetchAgain}) => {
         },
       };
       const { data } = await axios.put(
-        `/api/chat/groupadd`,
+        `https://inotebookbackend.herokuapp.com/api/chat/groupadd`,
         {
           chatId: selectedChat._id,
           userId: user1._id,
@@ -109,13 +109,14 @@ const UpdateGroupChatModal = ({fetchMessages , fetchAgain , setFetchAgain}) => {
         },
       };
       const { data } = await axios.put(
-        `/api/chat/groupremove`,
+        `https://inotebookbackend.herokuapp.com/api/chat/groupremove`,
         {
           chatId: selectedChat._id,
           userId: user1._id,
         },
         config
       );
+      console.log(data)
 
       user1._id === user._id ? setSelectedChat() : setSelectedChat(data);
       setFetchAgain(!fetchAgain);
@@ -148,7 +149,7 @@ const UpdateGroupChatModal = ({fetchMessages , fetchAgain , setFetchAgain}) => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.get(`/api/user?search=${search}`, config);
+      const { data } = await axios.get(`https://inotebookbackend.herokuapp.com/api/user?search=${search}`, config);
       console.log(data);
       setLoading(false);
       setSearchResult(data);
@@ -176,7 +177,7 @@ const UpdateGroupChatModal = ({fetchMessages , fetchAgain , setFetchAgain}) => {
         },
       };
       const { data } = await axios.put(
-        `/api/chat/rename`,
+        `https://inotebookbackend.herokuapp.com/api/chat/rename`,
         {
           chatId: selectedChat._id,
           chatName: groupChatName,
@@ -184,7 +185,7 @@ const UpdateGroupChatModal = ({fetchMessages , fetchAgain , setFetchAgain}) => {
         config
       );
 
-      console.log(data._id);
+      // console.log(data._id);
       // setSelectedChat("");
       setSelectedChat(data);
       setFetchAgain(!fetchAgain);
@@ -205,11 +206,11 @@ const UpdateGroupChatModal = ({fetchMessages , fetchAgain , setFetchAgain}) => {
   
   return (
       <>
-    <IconButton d={{ base: "flex" }} icon={<ViewIcon />} onClick={onOpen} />
+    <IconButton bg={dark===false?"#e8e8e8":"#202020"} d={{ base: "flex" }} icon={<ViewIcon />} onClick={onOpen} />
 
     <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent bg={dark===false?"white":"black"} color={dark===false?"black":"white"} style={{border: '2px solid white'}}>
           <ModalHeader
             fontSize="35px"
             fontFamily="Work sans"
@@ -259,13 +260,22 @@ const UpdateGroupChatModal = ({fetchMessages , fetchAgain , setFetchAgain}) => {
             {loading ? (
               <Spinner size="lg" />
             ) : (
-              searchResult?.map((user) => (
-                <UserListItem
-                  key={user._id}
-                  user={user}
-                  handleFunction={() => handleAddUser(user)}
-                />
-              ))
+              searchResult
+                ?.slice(0, 4)
+                .map((user) => (
+                  <UserListItem
+                    key={user._id}
+                    user={user}
+                    handleFunction={() => handleAddUser(user)}
+                  />
+                ))
+              // searchResult?.map((user) => (
+              //   <UserListItem
+              //     key={user._id}
+              //     user={user}
+              //     handleFunction={() => handleAddUser(user)}
+              //   />
+              // ))
             )}
           </ModalBody>
           <ModalFooter>

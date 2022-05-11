@@ -1,5 +1,5 @@
 import {useState } from 'react'
-import { Button } from "@chakra-ui/button";
+import { Button} from '@chakra-ui/react'
 import { Box, Text } from "@chakra-ui/layout";
 import { MenuButton, Tooltip } from "@chakra-ui/react";
 import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
@@ -39,7 +39,8 @@ const SideDrawer = () => {
     const [loading, setLoading] = useState(false)
     const [loadingChat, setLoadingChat] = useState()
 
-    const {user , selectedChat, setSelectedChat , chats, setChats, notification, setNotification} = ChatState();
+    const {user , setSelectedChat , chats, setChats, notification, setNotification, dark, setDark} = ChatState();
+    console.log(searchResult)
     const history = useHistory();
 
     const logoutHandler = () => {
@@ -68,7 +69,7 @@ const SideDrawer = () => {
           },
         };
   
-        const { data } = await axios.get(`/api/user?search=${search}`, config);
+        const { data } = await axios.get(`https://inotebookbackend.herokuapp.com/api/user?search=${search}`, config);
   
         setLoading(false);
         console.log(data);
@@ -94,7 +95,7 @@ const SideDrawer = () => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.post(`/api/chat`, { userId }, config);
+      const { data } = await axios.post(`https://inotebookbackend.herokuapp.com/api/chat`, { userId }, config);
 
       if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
       setSelectedChat(data);
@@ -112,13 +113,17 @@ const SideDrawer = () => {
       }
     }
     
-
+    const darkmode = () =>{
+      setDark(!dark)
+    }
+    console.log(notification)
   return (
     <>
      <Box  d="flex"
         justifyContent="space-between"
         alignItems="center"
-        bg="white"
+        bg={dark===false?"white":"black"}
+        color={dark===false?"black":"white"}
         w="100%"
         p="5px 10px 5px 10px"
         borderWidth="5px">
@@ -135,11 +140,12 @@ const SideDrawer = () => {
         </Text>
         <div>
             <Menu>
+            <Button  bg={dark===false?"#1da1f2":"#38b2ac"} color="white" size='sm' onClick={darkmode}>{dark===false?"Dark":"Bright"}</Button>
                 <MenuButton p={1}>
                   <NotificationBadge count={notification.length} effect={Effect.SCALE}/>
                     <BellIcon fontSize="2xl" m={1}/>
                 </MenuButton>
-                <MenuList pl={2}>
+                <MenuList bg="black" pl={2}>
                   {!notification.length && "no new messages"}
                   {notification.map((notif) => (
                      <MenuItem
@@ -157,7 +163,7 @@ const SideDrawer = () => {
                 </MenuList>
             </Menu>
             <Menu>
-            <MenuButton as={Button} bg="white" rightIcon={<ChevronDownIcon />}>
+            <MenuButton as={Button} bg={dark===false?"white":"black"} rightIcon={<ChevronDownIcon />}>
               <Avatar
                 size="sm"
                 cursor="pointer"
@@ -165,20 +171,20 @@ const SideDrawer = () => {
                 src={user.pic}
               />
             </MenuButton>
-            <MenuList>
+            <MenuList bg={dark===false?"white":"black"}>
               <ProfileModal user={user}>
-                <MenuItem>My Profile</MenuItem>{" "}
+                <MenuItem bg={dark===false?"white":"black"}>My Profile</MenuItem>{" "}
               </ProfileModal>
               <MenuDivider />
-              <MenuItem onClick={logoutHandler} >Logout</MenuItem>
+              <MenuItem bg={dark===false?"white":"black"} onClick={logoutHandler} >Logout</MenuItem>
             </MenuList>
           </Menu>
         </div>
      </Box>
 
-     <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
+     <Drawer placement="left" onClose={onClose}  isOpen={isOpen}>
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent bg={dark===false?"white":"black"} color={dark===false?"black":"white"}>
           <DrawerHeader borderBottomWidth="1px">Search Users</DrawerHeader>
           <DrawerBody>
             <Box d="flex" pb={2}>
@@ -188,7 +194,7 @@ const SideDrawer = () => {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <Button onClick={handleSearch}>Go</Button>
+              <Button bg={dark===false?"#e8e8e8":"#202020"} onClick={handleSearch}>Go</Button>
             </Box>
             {loading ? (
               <ChatLoading />
